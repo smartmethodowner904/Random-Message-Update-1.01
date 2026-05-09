@@ -42,8 +42,8 @@ function joinUI() {
 return {
 reply_markup: {
 inline_keyboard: [
-[{ text: "⚙️ Global Channel", url: "https://t.me/Global_Method_Channel" }],
-[{ text: "📢 Main Channel", url: "https://t.me/+75BQ2Qw9UZI4OTM1" }],
+[{ text: "🌏 Global TG Channel", url: "https://t.me/Global_Method_Channel" }],
+[{ text: "📢 Main TG Channel", url: "https://t.me/+75BQ2Qw9UZI4OTM1" }],
 [{ text: "✅ Joined", callback_data: "check_join" }]
 ]
 }
@@ -294,8 +294,8 @@ const mainLink = await createTempLink(MAIN_CHANNEL);
 
 await ctx.editMessageReplyMarkup({  
   inline_keyboard: [  
-    [{ text: "⚙️ Global Channel", url: globalLink.invite_link }],  
-    [{ text: "📢 Main Channel", url: mainLink.invite_link }],  
+    [{ text: "🌏 Global TG Channel", url: globalLink.invite_link }],  
+    [{ text: "📢 Main TG Channel", url: mainLink.invite_link }],  
     [{ text: "✅ Create Successful", callback_data: "done" }]  
   ]  
 });  
@@ -304,9 +304,9 @@ setTimeout(async () => {
   try {  
     await ctx.editMessageReplyMarkup({  
       inline_keyboard: [  
-        [{ text: "⚙️ Global Channel", url: globalLink.invite_link }],  
-        [{ text: "📢 Main Channel", url: mainLink.invite_link }],  
-        [{ text: "🔗 Generate Temp Link", callback_data: "gen_temp_link" }]  
+        [{ text: "🌏 Global TG Channel", url: globalLink.invite_link }],  
+        [{ text: "📢 Main TG Channel", url: mainLink.invite_link }],  
+        [{ text: "♻️Create New Link", callback_data: "gen_temp_link" }]  
       ]  
     });  
   } catch {}  
@@ -358,9 +358,9 @@ GROUP_ID,
 {
 reply_markup: {
 inline_keyboard: [
-[{ text: "⚙️ Global Channel", url: globalLink.invite_link }],
-[{ text: "📢 Main Channel", url: mainLink.invite_link }],
-[{ text: "🔗 Generate Temp Link", callback_data: "gen_temp_link" }]
+[{ text: "🌏 Global TG Channel", url: globalLink.invite_link }],
+[{ text: "📢 Main TG Channel", url: mainLink.invite_link }],
+[{ text: "♻️ New Link create", callback_data: "gen_temp_link" }]
 ]
 }
 }
