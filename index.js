@@ -256,7 +256,23 @@ if (id === ADMIN_ID && adminReply[ADMIN_ID]) {
 const target = adminReply[ADMIN_ID];
 adminReply[ADMIN_ID] = null;
 
-await ctx.telegram.sendMessage(target, `💬 Admin Reply:\n\n${text}`);  
+await ctx.telegram.sendMessage(
+  target,
+  `💬 Admin Reply To You
+
+👤 Admin: Smart Method Owner Sir 👑
+🆔 Chat ID: ${ADMIN_ID}
+
+💬 Reply Message:
+${text}`,
+  {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: "💬 Reply Again", callback_data: `reply_${ADMIN_ID}` }]
+      ]
+    }
+  }
+);  
 return ctx.reply("📩 Sent successful");
 
 }
@@ -264,16 +280,21 @@ return ctx.reply("📩 Sent successful");
 if (supportState[id]) {
 supportState[id] = false;
 
-await ctx.telegram.sendMessage(  
-  ADMIN_ID,  
-  `📩 USER MESSAGE\n\n👤 ${ctx.from.first_name}\n🆔 ${id}\n\n💬 ${text}`,  
-  {  
-    reply_markup: {  
-      inline_keyboard: [  
-        [{ text: "💬 Reply", callback_data: `reply_${id}` }]  
-      ]  
-    }  
-  }  
+await ctx.telegram.sendMessage(
+  ADMIN_ID,
+  `📩 USER NEW MESSAGE
+
+👤 ${ctx.from.first_name || "Unknown"} ${ctx.from.last_name || ""}
+🆔 ${id}
+
+💬 ${text}`,
+  {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: "💬 Reply", callback_data: `reply_${id}` }]
+      ]
+    }
+  }
 );  
 
 return ctx.reply("📩 Your message sent successfully");
@@ -294,8 +315,8 @@ bot.action("gen_temp_link", async (ctx) => {
 
     await ctx.editMessageReplyMarkup({
       inline_keyboard: [
-        [{ text: "⚙️ Global Channel", url: globalLink.invite_link }],
-        [{ text: "📢 Main Channel", url: mainLink.invite_link }],
+        [{ text: "🌏 Global TG Channel", url: globalLink.invite_link }],
+        [{ text: "📢 Main TG Channel", url: mainLink.invite_link }],
         [{ text: "✅ Create Successful", callback_data: "done" }]
       ]
     });
@@ -304,9 +325,9 @@ bot.action("gen_temp_link", async (ctx) => {
       try {
         await ctx.editMessageReplyMarkup({
           inline_keyboard: [
-            [{ text: "⚙️ Global Channel", url: globalLink.invite_link }],
-            [{ text: "📢 Main Channel", url: mainLink.invite_link }],
-            [{ text: "🔗 Generate Temp Link", callback_data: "gen_temp_link" }]
+            [{ text: "🌏 Global TG Channel", url: globalLink.invite_link }],
+            [{ text: "📢 Main TG Channel", url: mainLink.invite_link }],
+            [{ text: "♻️ Create New Link", callback_data: "gen_temp_link" }]
           ]
         });
       } catch {}
@@ -358,9 +379,9 @@ const sent = await bot.telegram.sendMessage(
   {
     reply_markup: {
       inline_keyboard: [
-        [{ text: "⚙️ Global Channel", url: globalLink.invite_link }],
-        [{ text: "📢 Main Channel", url: mainLink.invite_link }],
-        [{ text: "🔗 Generate Temp Link", callback_data: "gen_temp_link" }]
+        [{ text: "🌏 Global TG Channel", url: globalLink.invite_link }],
+        [{ text: "📢 Main TG Channel", url: mainLink.invite_link }],
+        [{ text: "♻️ Create New Link", callback_data: "gen_temp_link" }]
       ]
     }
   }
