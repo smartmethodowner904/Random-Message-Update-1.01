@@ -289,23 +289,32 @@ ctx.reply("✍️ Write reply message");
 });
 bot.action("gen_temp_link", async (ctx) => {
   try {
-
     const globalLink = await createTempLink(METHOD_CHANNEL);
+    const mainLink = await createTempLink(MAIN_CHANNEL);
 
-    const mainLink = await createTempLink("-1002315458574");
-    return ctx.reply(
-`🔗 Temporary Links Created 🚀
+    await ctx.editMessageReplyMarkup({
+      inline_keyboard: [
+        [{ text: "⚙️ Global Channel", url: globalLink.invite_link }],
+        [{ text: "📢 Main Channel", url: mainLink.invite_link }],
+        [{ text: "✅ Create Successful", callback_data: "done" }]
+      ]
+    });
 
-🌐 Global Channel:
-${globalLink.invite_link}
-
-📢 Main Channel:
-${mainLink.invite_link}`
-    );
+    setTimeout(async () => {
+      try {
+        await ctx.editMessageReplyMarkup({
+          inline_keyboard: [
+            [{ text: "⚙️ Global Channel", url: globalLink.invite_link }],
+            [{ text: "📢 Main Channel", url: mainLink.invite_link }],
+            [{ text: "🔗 Generate Temp Link", callback_data: "gen_temp_link" }]
+          ]
+        });
+      } catch {}
+    }, 2000);
 
   } catch (err) {
     console.log(err);
-    return ctx.reply("❌ Link create failed");
+    return ctx.answerCbQuery("❌ Failed");
   }
 });
 const randomMessages = [
