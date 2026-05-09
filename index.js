@@ -267,15 +267,15 @@ if (supportState[id]) {
 supportState[id] = false;
 
 await ctx.telegram.sendMessage(
-ADMIN_ID,
-📩 USER MESSAGE\n\n👤 ${ctx.from.first_name}\n🆔 ${id}\n\n💬 ${text},
-{
-reply_markup: {
-inline_keyboard: [
-[{ text: "💬 Reply", callback_data: reply_${id} }]
-]
-}
-}
+  ADMIN_ID,
+  `📩 USER MESSAGE\n\n👤 ${ctx.from.first_name}\n🆔 ${id}\n\n💬 ${text}`,
+  {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: "💬 Reply", callback_data: `reply_${id}` }]
+      ]
+    }
+  }
 );
 
 return ctx.reply("📩 Your message sent successfully");
