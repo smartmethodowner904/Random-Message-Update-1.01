@@ -43,7 +43,7 @@ function joinUI() {
     reply_markup: {
       inline_keyboard: [
         [{ text: "⚙️ Global Channel", url: "https://t.me/Global_Method_Channel" }],
-        [{ text: "📢 Main Channel", url: "https://t.me/+75BQ2Qw9UZI4OTM1M" }],
+        [{ text: "📢 Main Channel", url: "https://t.me/+75BQ2Qw9UZI4OTM1" }],
         [{ text: "✅ Joined", callback_data: "check_join" }]
       ]
     }
@@ -86,25 +86,37 @@ const boardchatState = {};
 /* ================= MIDDLEWARE ================= */
 
 bot.use(async (ctx, next) => {
-if (!ctx.from) return;
+  if (!ctx.from) return;
 
-const id = ctx.from.id;
-const text = ctx.message?.text;
+  const id = ctx.from.id;
+  const text = ctx.message?.text;
 
-if (id === ADMIN_ID) return next();
-if (text?.startsWith("/start")) return next();
+  const db = loadDB();
 
-const db = loadDB();
-if (db.banned.includes(String(id))) {
-return ctx.reply("⛔ You are blocked");
-}
+  // ================= SAVE USER =================
+  if (!db.users[id]) {
+    db.users[id] = true;
+    saveDB(db);
+  }
 
-const joined = await isJoined(ctx);
-if (!joined) {
-return ctx.reply("⚠️ Please join channels first 🚀", joinUI());
-}
+  // ================= ADMIN SKIP =================
+  if (id === ADMIN_ID) return next();
 
-return next();
+  // ================= START SKIP =================
+  if (text?.startsWith("/start")) return next();
+
+  // ================= BAN CHECK =================
+  if (db.banned.includes(String(id))) {
+    return ctx.reply("⛔ You are blocked");
+  }
+
+  // ================= JOIN CHECK =================
+  const joined = await isJoined(ctx);
+  if (!joined) {
+    return ctx.reply("⚠️ Please join channels first 🚀", joinUI());
+  }
+
+  return next();
 });
 
 /* ================= START ================= */
@@ -245,7 +257,7 @@ const target = adminReply[ADMIN_ID];
 adminReply[ADMIN_ID] = null;
 
 await ctx.telegram.sendMessage(target, `💬 Admin Reply:\n\n${text}`);  
-return ctx.reply("📩 Sent");
+return ctx.reply("📩 Sent successful");
 
 }
 
