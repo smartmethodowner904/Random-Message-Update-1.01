@@ -240,11 +240,10 @@ if (boardchatState[ADMIN_ID] && id === ADMIN_ID) {
 boardchatState[ADMIN_ID] = false;
 const db = loadDB();
 
-await bot.telegram.sendMessage(GROUP_ID, `📢 ${text}`);
 for (let uid of Object.keys(db.users)) {
-try {
-await bot.telegram.sendMessage(GROUP_ID, `📢 ${text}`);
-} catch {}
+  try {
+    await bot.telegram.sendMessage(uid, `📢 ${text}`);
+  } catch {}
 }
 
 return ctx.reply("📩 Sent successfully");
@@ -272,7 +271,7 @@ await ctx.telegram.sendMessage(
   {
     reply_markup: {
       inline_keyboard: [
-        [{ text: "💬 Reply", callback_data: `reply_${id}` }]
+        [{ text: "💬 Reply", callback_data: `reply_${id}`
       ]
     }
   }
