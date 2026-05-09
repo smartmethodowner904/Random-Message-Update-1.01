@@ -39,19 +39,27 @@ return false;
 /* ================= UI ================= */
 
 function joinUI() {
-return {
-reply_markup: {
-inline_keyboard: [
-[{ text: "⚙️ Global Channel", url: "https://t.me/Global_Method_Channel" }],
-[{ text: "📢 Main Channel", url: "https://t.me/+75BQ2Qw9UZI4OTM1" }],
-[{ text: "✅ Joined", callback_data: "check_join" }]
-]
+  return {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: "⚙️ Global Channel", url: "https://t.me/Global_Method_Channel" }],
+        [{ text: "📢 Main Channel", url: "https://t.me/+75BQ2Qw9UZI4OTM1M" }],
+        [{ text: "✅ Joined", callback_data: "check_join" }]
+      ]
+    }
+  };
 }
-};
+
+/* ===== TEMP LINK SYSTEM ===== */
+
+async function createTempLink(chatId) {
+  return await bot.telegram.createChatInviteLink(chatId, {
+    expire_date: Math.floor(Date.now() / 1000) + 60 * 60,
+    member_limit: 1
+  });
 }
 
 const START_MSG = `🌸 Bot Started Successfully 🚀
-
 👋 Welcome!
 
 📌 You can use the following commands:
@@ -267,7 +275,27 @@ if (ctx.from.id !== ADMIN_ID) return;
 adminReply[ADMIN_ID] = ctx.match[1];
 ctx.reply("✍️ Write reply message");
 });
+bot.action("gen_temp_link", async (ctx) => {
+  try {
 
+    const globalLink = await createTempLink(METHOD_CHANNEL);
+
+    const mainLink = await createTempLink("-1002315458574");
+    return ctx.reply(
+`🔗 Temporary Links Created 🚀
+
+🌐 Global Channel:
+${globalLink.invite_link}
+
+📢 Main Channel:
+${mainLink.invite_link}`
+    );
+
+  } catch (err) {
+    console.log(err);
+    return ctx.reply("❌ Link create failed");
+  }
+});
 const randomMessages = [
 "🔥 Don't miss the latest updates!",
 "🚀 Join now and get exclusive access!",
@@ -299,19 +327,23 @@ setInterval(async () => {
   if (!randomOn) return;
 
   try {
-    const sent = await bot.telegram.sendMessage(
-      GROUP_ID,
-      `📢 ${getRandomMsg()}`,
-      {
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: "⚙️ Global Channel", url: "https://t.me/Global_Method_Channel" }],
-            [{ text: "📢 Main Channel", url: "https://t.me/+75BQ2Qw9UZI4OTM1" }]
-          ]
-        }
-      }
-    );
+    const globalLink = await createTempLink(METHOD_CHANNEL);
 
+const mainLink = await createTempLink("-1002315458574");
+
+const sent = await bot.telegram.sendMessage(
+  GROUP_ID,
+  `📢 ${getRandomMsg()}`,
+  {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: "⚙️ Global Channel", url: globalLink.invite_link }],
+        [{ text: "📢 Main Channel", url: mainLink.invite_link }],
+        [{ text: "🔗 Generate Temp Link", callback_data: "gen_temp_link" }]
+      ]
+    }
+  }
+);
     setTimeout(async () => {
       try {
         await bot.telegram.deleteMessage(GROUP_ID, sent.message_id);
