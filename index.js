@@ -252,12 +252,15 @@ return ctx.reply("📩 Sent successfully");
 }
 
 if (id === ADMIN_ID && adminReply[ADMIN_ID]) {
-const target = adminReply[ADMIN_ID];
-adminReply[ADMIN_ID] = null;
+  const target = adminReply[ADMIN_ID];
+  adminReply[ADMIN_ID] = null;
 
-await ctx.telegram.sendMessage(target, 💬 Admin Reply:\n\n${text});
-return ctx.reply("📩 Sent successful");
+  await ctx.telegram.sendMessage(
+    target,
+    `💬 Admin Reply:\n\n${text}`
+  );
 
+  return ctx.reply("📩 Sent successful");
 }
 
 if (supportState[id]) {
