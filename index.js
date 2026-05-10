@@ -6,12 +6,6 @@ const bot = new Telegraf(BOT_TOKEN);
 
 /* ================= CONFIG ================= */
 
-const ADMIN_ID = 8136997138;
-const METHOD_CHANNEL = "@Global_Method_Channel";
-const GROUP_ID = "-1003820143618";
-const DB_FILE = "./db.json";
-let randomOn = true;
-
 /* ================= DB ================= */
 
 function loadDB() {
@@ -287,6 +281,11 @@ ctx.reply("✍️ Write reply message");
 bot.action("done", async (ctx) => {
   return ctx.answerCbQuery("✅");
 });
+
+/* 👇 এখানেই বসবে নতুনটা */
+bot.action("generate_new_link", async (ctx) => {
+  return ctx.answerCbQuery("♻️ Please click Create New Link");
+});
 bot.action("gen_temp_link", async (ctx) => {
 try {
 const globalLink = await createTempLink(METHOD_CHANNEL);
@@ -349,8 +348,8 @@ if (!randomOn) return;
 
 try {
 const globalLink = await createTempLink(METHOD_CHANNEL);
-
 const mainLink = await createTempLink(MAIN_CHANNEL);
+
 const sent = await bot.telegram.sendMessage(
   GROUP_ID,
   `📢 ${getRandomMsg()}`,
@@ -359,11 +358,12 @@ const sent = await bot.telegram.sendMessage(
       inline_keyboard: [
         [{ text: "🌏 Global TG Channel", url: globalLink.invite_link }],
         [{ text: "📢 Main TG Channel", url: mainLink.invite_link }],
-        [{ text: "♻️ Create New Link", callback_data: "gen_temp_link" }]
+        [{ text: "Create New Link", callback_data: "generate_new_link" }]
       ]
     }
   }
 );
+
 setTimeout(async () => {
 try {
 await bot.telegram.deleteMessage(GROUP_ID, sent.message_id);
