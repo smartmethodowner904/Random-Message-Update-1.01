@@ -1,5 +1,13 @@
 import { Telegraf } from "telegraf";
-import { BOT_TOKEN } from "./config.js";
+import {
+  BOT_TOKEN,
+  ADMIN_ID,
+  METHOD_CHANNEL,
+  MAIN_CHANNEL,
+  GROUP_ID,
+  DB_FILE
+} from "./config.js";
+
 import fs from "fs";
 
 const bot = new Telegraf(BOT_TOKEN);
@@ -33,15 +41,15 @@ return false;
 /* ================= UI ================= */
 
 function joinUI() {
-return {
-reply_markup: {
-inline_keyboard: [
-[{ text: "🌏 Global TG Channel", url: "https://t.me/Global_Method_Channel" }],
-[{ text: "📢 Main TG Channel", url: "https://t.me/+75BQ2Qw9UZI4OTM1" }],
-[{ text: "✅ Joined", callback_data: "check_join" }]
-]
-}
-};
+  return {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: "🌏 Global TG Channel", url: `https://t.me/${METHOD_CHANNEL.replace("@","")}` }],
+        [{ text: "📢 Main TG Channel", url: "https://t.me/+75BQ2Qw9UZI4OTM1" }],
+        [{ text: "✅ Joined", callback_data: "check_join" }]
+      ]
+    }
+  };
 }
 
 /* ===== TEMP LINK SYSTEM ===== */
@@ -305,7 +313,7 @@ setTimeout(async () => {
       inline_keyboard: [  
         [{ text: "🌏 Global TG Channel", url: globalLink.invite_link }],  
         [{ text: "📢 Main TG Channel", url: mainLink.invite_link }],  
-        [{ text: "♻️ Create New Link", callback_data: "generate_new_link" }]  
+        [{ text: "♻️ Create New Link", callback_data: "gen_temp_link" }]  
       ]  
     });  
   } catch {}  
@@ -313,7 +321,7 @@ setTimeout(async () => {
 
 } catch (err) {
 console.log(err);
-return ctx.answerCbQuery("❌ Failed");
+return ctx.answerCbQuery("❌ Failed", { show_alert: true });
 }
 });
 const randomMessages = [
@@ -343,36 +351,38 @@ function getRandomMsg() {
 return randomMessages[Math.floor(Math.random() * randomMessages.length)];
 }
 
+let randomOn = true;
+
 setInterval(async () => {
-if (!randomOn) return;
+  if (!randomOn) return;
 
-try {
-const globalLink = await createTempLink(METHOD_CHANNEL);
-const mainLink = await createTempLink(MAIN_CHANNEL);
+  try {
+    const globalLink = await createTempLink(METHOD_CHANNEL);
+    const mainLink = await createTempLink(MAIN_CHANNEL);
 
-const sent = await bot.telegram.sendMessage(
-  GROUP_ID,
-  `📢 ${getRandomMsg()}`,
-  {
-    reply_markup: {
-      inline_keyboard: [
-        [{ text: "🌏 Global TG Channel", url: globalLink.invite_link }],
-        [{ text: "📢 Main TG Channel", url: mainLink.invite_link }],
-        [{ text: "Create New Link", callback_data: "generate_new_link" }]
-      ]
-    }
+    const sent = await bot.telegram.sendMessage(
+      GROUP_ID,
+      `📢 ${getRandomMsg()}`,
+      {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: "🌏 Global TG Channel", url: globalLink.invite_link }],
+            [{ text: "📢 Main TG Channel", url: mainLink.invite_link }],
+            [{ text: "♻️ Create New Link", callback_data: "gen_temp_link" }]
+          ]
+        }
+      }
+    );
+
+    setTimeout(async () => {
+      try {
+        await bot.telegram.deleteMessage(GROUP_ID, sent.message_id);
+      } catch {}
+    }, 4 * 60 * 1000);
+
+  } catch (err) {
+    console.log(err);
   }
-);
-
-setTimeout(async () => {
-try {
-await bot.telegram.deleteMessage(GROUP_ID, sent.message_id);
-} catch {}
-}, 4 * 60 * 1000);
-
-} catch (err) {
-console.log(err);
-}
 }, 2 * 60 * 1000);
 bot.launch();
 console.log("✅ BOT RUNNING");
