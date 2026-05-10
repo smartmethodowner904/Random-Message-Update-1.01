@@ -5,11 +5,11 @@ export const ADMIN_ID = 8136997138;
 // Global channel username
 export const METHOD_CHANNEL = "@Global_Method_Channel";
 
-// Main channel/group ID
+// Main channel ID
 export const MAIN_CHANNEL = "-1002315458574";
 
-// Group ID যেখানে random message যাবে
+// Group where message will send
 export const GROUP_ID = "-1003820143618";
 
-// DB File
+// Database file
 export const DB_FILE = "./db.json";
