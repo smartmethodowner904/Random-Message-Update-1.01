@@ -1,5 +1,10 @@
 import { Telegraf } from "telegraf";
-import { BOT_TOKEN } from "./config.js";
+
+import {
+  BOT_TOKEN,
+  MAIN_CHANNEL
+} from "./config.js";
+
 import fs from "fs";
 
 const bot = new Telegraf(BOT_TOKEN);
@@ -256,7 +261,7 @@ if (id === ADMIN_ID && adminReply[ADMIN_ID]) {
 
   await ctx.telegram.sendMessage(
     target,
-    `💬 Admin Reply:\n\n${text}`
+    `💬 Admin Reply To You:\n\n${text}`
   );
 
   return ctx.reply("📩 Sent successful");
@@ -267,11 +272,11 @@ supportState[id] = false;
 
 await ctx.telegram.sendMessage(
   ADMIN_ID,
-  `📩 USER MESSAGE\n\n👤 ${ctx.from.first_name}\n🆔 ${id}\n\n💬 ${text}`,
+  `📩 USER NEW MESSAGE\n\n👤 ${ctx.from.first_name}\n🆔 ${id}\n\n💬 ${text}`,
   {
     reply_markup: {
       inline_keyboard: [
-        [{ text: "💬 Reply", callback_data: `reply_${id}`
+        [{ text: "💬 Reply", callback_data: `reply_${id}` }]
       ]
     }
   }
@@ -287,6 +292,10 @@ if (ctx.from.id !== ADMIN_ID) return;
 
 adminReply[ADMIN_ID] = ctx.match[1];
 ctx.reply("✍️ Write reply message");
+});
+
+bot.action("done", async (ctx) => {
+  return ctx.answerCbQuery("✅");
 });
 bot.action("gen_temp_link", async (ctx) => {
 try {
@@ -351,20 +360,19 @@ if (!randomOn) return;
 try {
 const globalLink = await createTempLink(METHOD_CHANNEL);
 
-const mainLink = await createTempLink("-1002315458574");
-
+const mainLink = await createTempLink(MAIN_CHANNEL);
 const sent = await bot.telegram.sendMessage(
-GROUP_ID,
-📢 ${getRandomMsg()},
-{
-reply_markup: {
-inline_keyboard: [
-[{ text: "🌏 Global TG Channel", url: globalLink.invite_link }],
-[{ text: "📢 Main TG Channel", url: mainLink.invite_link }],
-[{ text: "♻️ New Link create", callback_data: "gen_temp_link" }]
-]
-}
-}
+  GROUP_ID,
+  `📢 ${getRandomMsg()}`,
+  {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: "🌏 Global TG Channel", url: globalLink.invite_link }],
+        [{ text: "📢 Main TG Channel", url: mainLink.invite_link }],
+        [{ text: "♻️ New Link create", callback_data: "gen_temp_link" }]
+      ]
+    }
+  }
 );
 setTimeout(async () => {
 try {
