@@ -287,7 +287,7 @@ ctx.reply("✍️ Write reply message");
 });
 
 bot.action("done", async (ctx) => {
-  return ctx.answerCbQuery("✅ Create Successful");
+  return ctx.answerCbQuery("✅Create...Successful");
 });
 
 /* 👇 এখানেই বসবে নতুনটা */
@@ -303,7 +303,7 @@ await ctx.editMessageReplyMarkup({
   inline_keyboard: [  
     [{ text: "🌍 Global Method Channel", url: globalLink.invite_link }],  
     [{ text: "📢 Main Telegram Channel", url: mainLink.invite_link }],  
-    [{ text: "✅ Create Successful", callback_data: "done" }]  
+    [{ text: "✅Create...Successful", callback_data: "done" }]  
   ]  
 });  
 
@@ -353,12 +353,16 @@ return randomMessages[Math.floor(Math.random() * randomMessages.length)];
 
 let randomOn = true;
 
+let randomOn = true;
+
 setInterval(async () => {
   if (!randomOn) return;
 
   try {
     const globalLink = await createTempLink(METHOD_CHANNEL);
     const mainLink = await createTempLink(MAIN_CHANNEL);
+
+    let msgIndex = 0;
 
     const sent = await bot.telegram.sendMessage(
       GROUP_ID,
@@ -374,7 +378,23 @@ setInterval(async () => {
       }
     );
 
+    // 🔁 প্রতি 3 সেকেন্ডে message edit হবে
+    const changer = setInterval(async () => {
+      try {
+        await bot.telegram.editMessageText(
+          GROUP_ID,
+          sent.message_id,
+          null,
+          `📢 ${getRandomMsg()}`
+        );
+      } catch {
+        clearInterval(changer);
+      }
+    }, 3000);
+
+    // 🗑️ 4 মিনিট পরে delete + interval stop
     setTimeout(async () => {
+      clearInterval(changer);
       try {
         await bot.telegram.deleteMessage(GROUP_ID, sent.message_id);
       } catch {}
