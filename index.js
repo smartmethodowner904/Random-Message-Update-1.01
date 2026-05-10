@@ -1,10 +1,5 @@
 import { Telegraf } from "telegraf";
-
-import {
-  BOT_TOKEN,
-  MAIN_CHANNEL
-} from "./config.js";
-
+import { BOT_TOKEN } from "./config.js";
 import fs from "fs";
 
 const bot = new Telegraf(BOT_TOKEN);
@@ -91,37 +86,32 @@ const boardchatState = {};
 /* ================= MIDDLEWARE ================= */
 
 bot.use(async (ctx, next) => {
-if (!ctx.from) return;
+  if (!ctx.from) return;
 
-const id = ctx.from.id;
-const text = ctx.message?.text;
+  const id = ctx.from.id;
+  const text = ctx.message?.text;
 
-const db = loadDB();
+  const db = loadDB();
 
-// ================= SAVE USER =================
-if (!db.users[id]) {
-db.users[id] = true;
-saveDB(db);
-}
+  if (!db.users[id]) {
+    db.users[id] = true;
+    saveDB(db);
+  }
 
-// ================= ADMIN SKIP =================
-if (id === ADMIN_ID) return next();
+  if (id === ADMIN_ID) return next();
 
-// ================= START SKIP =================
-if (text?.startsWith("/start")) return next();
+  if (text?.startsWith("/start")) return next();
 
-// ================= BAN CHECK =================
-if (db.banned.includes(String(id))) {
-return ctx.reply("⛔ You are blocked");
-}
+  if (db.banned.includes(String(id))) {
+    return ctx.reply("⛔ You are blocked");
+  }
 
-// ================= JOIN CHECK =================
-const joined = await isJoined(ctx);
-if (!joined) {
-return ctx.reply("⚠️ Please join channels first 🚀", joinUI());
-}
+  const joined = await isJoined(ctx);
+  if (!joined) {
+    return ctx.reply("⚠️ Please join channels first 🚀", joinUI());
+  }
 
-return next();
+  return next();
 });
 
 /* ================= START ================= */
@@ -316,7 +306,7 @@ setTimeout(async () => {
       inline_keyboard: [  
         [{ text: "🌏 Global TG Channel", url: globalLink.invite_link }],  
         [{ text: "📢 Main TG Channel", url: mainLink.invite_link }],  
-        [{ text: "♻️Create New Link", callback_data: "gen_temp_link" }]  
+        [{ text: "♻️ Create New Link", callback_data: "generate_new_link" }]  
       ]  
     });  
   } catch {}  
@@ -369,7 +359,7 @@ const sent = await bot.telegram.sendMessage(
       inline_keyboard: [
         [{ text: "🌏 Global TG Channel", url: globalLink.invite_link }],
         [{ text: "📢 Main TG Channel", url: mainLink.invite_link }],
-        [{ text: "♻️ New Link create", callback_data: "gen_temp_link" }]
+        [{ text: "♻️ Create New Link", callback_data: "gen_temp_link" }]
       ]
     }
   }
