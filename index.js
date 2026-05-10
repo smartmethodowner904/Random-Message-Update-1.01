@@ -351,18 +351,12 @@ function getRandomMsg() {
 return randomMessages[Math.floor(Math.random() * randomMessages.length)];
 }
 
-let randomOn = true;
-
-let randomOn = true;
-
 setInterval(async () => {
   if (!randomOn) return;
 
   try {
     const globalLink = await createTempLink(METHOD_CHANNEL);
     const mainLink = await createTempLink(MAIN_CHANNEL);
-
-    let msgIndex = 0;
 
     const sent = await bot.telegram.sendMessage(
       GROUP_ID,
@@ -378,21 +372,28 @@ setInterval(async () => {
       }
     );
 
-    // 🔁 প্রতি 3 সেকেন্ডে message edit হবে
     const changer = setInterval(async () => {
       try {
         await bot.telegram.editMessageText(
           GROUP_ID,
           sent.message_id,
           null,
-          `📢 ${getRandomMsg()}`
+          `📢 ${getRandomMsg()}`,
+          {
+            reply_markup: {
+              inline_keyboard: [
+                [{ text: "🌍 Global Method Channel", url: globalLink.invite_link }],
+                [{ text: "📢 Main Telegram Channel", url: mainLink.invite_link }],
+                [{ text: "♻️ Create New Link", callback_data: "gen_temp_link" }]
+              ]
+            }
+          }
         );
       } catch {
         clearInterval(changer);
       }
     }, 3000);
 
-    // 🗑️ 4 মিনিট পরে delete + interval stop
     setTimeout(async () => {
       clearInterval(changer);
       try {
